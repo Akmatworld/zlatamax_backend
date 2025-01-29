@@ -2,6 +2,8 @@ import express from 'express'
 import { dirname, join } from 'path'
 import {fileURLToPath} from "url";
 
+import cors from 'cors'
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -11,6 +13,7 @@ const app = express()
 const port = 8000
 
 
+app.use(cors())
 app.use('/static', express.static(join(__dirname, 'static')))
 
 app.get('/api/product/knives/:id', (req, res) => {
