@@ -31,7 +31,11 @@ app.get('/api/product/trademark', (req, res) => {
 })
 
 app.get('/api/product/knives', (req, res) => {
-    const { trademark, inStock, steel, rating, searchText } = req.query;
+    let { trademark, inStock, steel, rating, searchText } = req.query;
+
+    steel     = steel ? JSON.parse(steel) : [];
+    trademark = trademark ? JSON.parse(trademark) : [];
+    rating    = rating ? JSON.parse(rating) : [];
 
     const filteredKnives = knives.filter((knife) => {
         let isMatch = true;
@@ -44,7 +48,7 @@ app.get('/api/product/knives', (req, res) => {
         }
 
         // Фильтрация по марке, если параметр передан
-        if (trademark && knife.trademark !== trademark) {
+        if (Array.isArray(trademark) && trademark?.length && !trademark.includes(knife.trademark)) {
             isMatch = false;
         }
 
@@ -54,19 +58,18 @@ app.get('/api/product/knives', (req, res) => {
         }
 
         // Фильтрация по стали, если параметр передан
-        if (steel && knife.steel !== steel) {
+        if (Array.isArray(steel) && steel.length && !steel.includes(knife.steel)) {
             isMatch = false;
         }
 
         // Фильтрация по рейтингу, если параметр передан
-        if (rating && knife.rating !== parseInt(rating, 10)) {
+        if (Array.isArray(rating) && rating?.length && !rating.includes(knife.rating)) {
             isMatch = false;
         }
 
         return isMatch;
     })
 
-    console.log(filteredKnives)
     res.status(200).json(filteredKnives)
 })
 
